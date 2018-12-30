@@ -23,7 +23,7 @@ public class MemberRegisterService {
 				new Date());
 		
 		//memberDao.insert(newMember);
-		
+		//ㅁㅇㄻㄴㅇㄹ
 		
 	}
 	
