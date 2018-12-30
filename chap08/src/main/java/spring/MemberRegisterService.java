@@ -22,7 +22,7 @@ public class MemberRegisterService {
 				req.getEmail(), req.getPassword(), req.getName(),
 				new Date());
 		
-		memberDao.insert(newMember);
+		//memberDao.insert(newMember);
 		
 		
 	}
