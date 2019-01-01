@@ -7,8 +7,11 @@ import java.util.List;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
+import spring.ChangePasswordService;
+import spring.IdPasswordNotMatchingException;
 import spring.Member;
 import spring.MemberDao;
+import spring.MemberNotFoundException;
 
 public class MainForMemberDao {
 	
@@ -20,10 +23,28 @@ public class MainForMemberDao {
 	
 		memberDao = ctx.getBean("memberDao", MemberDao.class);
 	
-		selectAll();
 		
+		ChangePasswordService cps = 
+				ctx.getBean("changePwdSvc", ChangePasswordService.class);
+		try {
+			cps.changePassword("asdf", "1234", "1111");
+			System.out.println("암호를 변경했습니다.");
+		} catch (MemberNotFoundException e) {
+			System.out.println("회원 데이터가 존재하지 않습니다.");
+		}catch (IdPasswordNotMatchingException e) {
+			System.out.println("암호가 올바르지 않습니다.");
+		}
+		ctx.close();
+		
+		
+		
+		
+		//selectAll();
+		//updateMember();
+		//insertMember();
 	
 	
+		//ctx.close();
 	}
 	
 	

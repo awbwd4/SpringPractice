@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -37,11 +38,33 @@ public class MemberDao {
 	}
 
 	public Member selectByEmail(String email) {
+		List<Member> results = jdbcTemplate.query(
+				"select * from spring4fs.MEMBER where EMAIL = ?", 
+				new RowMapper<Member>() {
 
-		List<Member> results = jdbcTemplate.query("select*from spring4fs.MEMBER where EMAIL =?",
+					public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
+						Member member = new Member(rs.getString("EMAIL"), rs.getString("PASSWORD"),
+								rs.getString("NAME"), rs.getTimestamp("REGDATE"));
+						member.setId(rs.getLong("ID"));
+						return member;
+					}
+					
+				},
+				email);
+			return results.isEmpty() ? null : results.get(0);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+	/*	List<Member> results = jdbcTemplate.query("select*from spring4fs.MEMBER where EMAIL =?",
 
 				new RowMapper<Member>() {
-					@Override
 					public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Member member = new Member(rs.getString("EMAIL"), rs.getString("PASSWORD"),
 								rs.getString("NAME"), rs.getTimestamp("REGDATE"));
@@ -51,14 +74,13 @@ public class MemberDao {
 					}
 				}, email);
 
-		return results.isEmpty() ? null : results.get(0);
+		return results.isEmpty() ? null : results.get(0);*/
 	}
 
 
 	public List<Member> selectAll() {
 		List<Member> results = jdbcTemplate.query("select*from spring4fs.MEMBER",
 				new RowMapper<Member>() {//rowMapper임의 클래스 구현
-			@Override
 			public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Member member = new Member(rs.getString("EMAIL"), rs.getString("PASSWORD"), rs.getString("NAME"),
 						rs.getTimestamp("REGDATE"));
@@ -82,10 +104,16 @@ public class MemberDao {
 	
 	
 	public void update(Member member) {
-		jdbcTemplate.update(
-				//쿼리 실행 결과로 변경된 행의 개수를 리턴함.
-			"update MEMBER set NAME =?, PASSWORD = ? where EMAIL = ?",
-			member.getName(), member.getPassword(), member.getEmail());
+		
+		try {
+			
+			jdbcTemplate.update(
+					//쿼리 실행 결과로 변경된 행의 개수를 리턴함.
+					"update MEMBER set NAME =?, PASSWORD = ? where EMAIL = ?",
+					member.getName(), member.getPassword(), member.getEmail());
+		} catch (DataAccessException e) {
+			
+		}
 	}
 	
 	
@@ -97,7 +125,6 @@ public class MemberDao {
 
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			
-			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				//파라미터로 전달받은 Connection을 이용해서 PreparedStatement 생성
 				PreparedStatement pstmt = con.prepareStatement(
