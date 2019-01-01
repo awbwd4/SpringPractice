@@ -11,7 +11,7 @@ public class ChangePasswordService {
 	}
 	
 	
-	//@Transactional
+	@Transactional
 	public void changePassword(String email, String oldPwd, String newPwd) {
 		
 		Member member = memberDao.selectByEmail(email);
