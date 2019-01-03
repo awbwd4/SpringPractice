@@ -1,14 +1,19 @@
 package spring;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 public class ChangePasswordService {
 
 	private MemberDao memberDao;
 	
+	
 	public ChangePasswordService(MemberDao memberDao) {
 		this.memberDao = memberDao;
 	}
-	
+	@Transactional
 	public void changePassword(String email, String oldPwd, String newPwd) {
+		System.out.println("ChangePasswordService - changePassword()");
 		
 		Member member = memberDao.selectByEmail(email);
 		
